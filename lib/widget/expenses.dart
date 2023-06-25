@@ -32,6 +32,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
+      useSafeArea: true,
       isScrollControlled: true,
       context: context,
       builder: (ctx) => NewExpense(
@@ -72,6 +73,7 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(context) {
+    final widgetWidth = MediaQuery.of(context).size.width;
     Widget mainContent = const Center(
       child: Text('No expense found. Start add something!'),
     );
@@ -93,10 +95,20 @@ class _ExpensesState extends State<Expenses> {
           ),
         ],
       ),
-      body: Column(
+      body: widgetWidth <= 500 ? Column(
         children: [
-          const SizedBox(height: 15,),
           Chart(expenses: _registeredExpenses),
+          Expanded(child: mainContent),
+        ],
+      )
+      : Row(
+        children: [
+          Expanded(   // because we defined Chart(...) with width = double.infinite => Chart will take
+          //much space as posible, and the Row is also take much space as posible => flutter doesn't allow it.
+            child: Chart(
+              expenses: _registeredExpenses
+            ),
+          ),
           Expanded(child: mainContent),
         ],
       ),
